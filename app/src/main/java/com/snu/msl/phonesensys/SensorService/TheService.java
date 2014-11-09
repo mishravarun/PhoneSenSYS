@@ -311,7 +311,7 @@ PowerManager manager =
 	Log.d("Latitude", "disable");
 	GPS_STATUS="Location Not Available";
         MyActivity.refreshStatus();
-
+        MyActivity.isRunning=false;
         if(sampling==0)
 	{
 	File root = Environment.getExternalStorageDirectory();

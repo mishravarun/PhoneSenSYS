@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -81,11 +82,22 @@ public class MyActivity extends Activity implements SensorEventListener {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         ACCOUNT=pref.getString("username",null);
         ActionBar ab = getActionBar();
+
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#81a3d0"));
         ab.setBackgroundDrawable(colorDrawable);
         ab.setSplitBackgroundDrawable(colorDrawable);
         cardView = (CardView) findViewById(R.id.carddemo_weathercard);
         t=(TextView)findViewById(R.id.textView);
+        if(isMyServiceRunning())
+        {
+            refreshStatus();
+            isRunning=true;
+        }
+        else
+        {
+            isRunning = false;
+            t.setText("Idle");
+        }
         SensorManager mSensorManager;
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if(mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) !=null){
@@ -126,6 +138,15 @@ public class MyActivity extends Activity implements SensorEventListener {
         if(!isRunning){
             super.onBackPressed();
         }
+    }
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (TheService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
     public static void refreshStatus()
     {
